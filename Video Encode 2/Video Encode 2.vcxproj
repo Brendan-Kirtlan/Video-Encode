@@ -156,6 +156,9 @@
     <ClInclude Include="..\..\Video encode\Video encode\lodepng-master\lodepng-master\lodepng.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

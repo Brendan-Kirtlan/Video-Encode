@@ -16,7 +16,7 @@ unsigned int pixelSize = 4;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
-const string outputVideo = "output.mp4";
+const string outputVideo = "videos/output.mp4";
 const int framesPerImage = 1;
 
 int main() {
