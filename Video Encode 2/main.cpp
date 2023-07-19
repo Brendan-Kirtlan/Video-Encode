@@ -11,19 +11,19 @@ using namespace std;
 
 const string directory = "images/";
 unsigned int width = 1920;
-unsigned int height = 1280;
+unsigned int height = 1080;
 unsigned int pixelSize = 4;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
 const string outputVideo = "videos/output.mp4";
-const int framesPerImage = 1;
+const int framesPerImage = 2;
 
 int main() {
 	vector<unsigned char> image;
 	vector<unsigned char> bytes;
 
-	string filename = "Capture.PNG";
+	string filename = "testfiles/Capture.PNG";
 
 	filesystem::remove_all(directory);
 	filesystem::create_directory(directory);
@@ -34,6 +34,7 @@ int main() {
 		generatePNG(image, outputName);
 		numPNG++;
 	}
+	cout << numPNG << " images saved" << endl;
 	generateVideo();
 	return 0;
 }
@@ -46,7 +47,7 @@ int generatePNG(vector<unsigned char> image, string outputName)
 		return 1;
 	}
 
-	cout << "Image saved as " << outputName << endl;
+	//cout << "Image saved as " << outputName << endl;
 
 	return 0;
 
@@ -116,9 +117,12 @@ vector<unsigned char> generateImageArray(vector<unsigned char> bytes) {
 					image[pixelIndex + 3] = 255;
 					break;
 				}
-
-
-
+			}
+			else {
+				image[pixelIndex] = 255;
+				image[pixelIndex + 1] = 255;
+				image[pixelIndex + 2] = 255;
+				image[pixelIndex + 3] = 255;
 			}
 
 			//Grid lines
