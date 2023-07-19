@@ -12,7 +12,7 @@ using namespace std;
 const string directory = "images/";
 unsigned int width = 1920;
 unsigned int height = 1280;
-unsigned int pixelSize = 1;
+unsigned int pixelSize = 4;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
