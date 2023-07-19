@@ -25,6 +25,7 @@ int main() {
 
 	string filename = "testfiles/Capture.PNG";
 
+	//clean image directory
 	filesystem::remove_all(directory);
 	filesystem::create_directory(directory);
 	while (!endFile) {
