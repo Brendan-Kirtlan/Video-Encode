@@ -6,8 +6,6 @@
 #include <bitset>
 #include <opencv2/opencv.hpp>
 #include <filesystem>
-//hi
-//hello
 
 using namespace std;
 
