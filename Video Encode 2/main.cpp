@@ -295,6 +295,7 @@ vector<unsigned char> PNGToData(string pngImagePath) {
 			else if (static_cast<int>(color[0]) > 200) { byte |= 3; }
 			//Blue, 10
 			else if (static_cast<int>(color[1]) > 200) { byte |= 2; }
+			//Black, 00, automatically occurs in byte from the double bit shift
 
 			if (byteCounter == 3) {
 				bytes.push_back(byte);
