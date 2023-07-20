@@ -10,4 +10,7 @@ int generatePNG(vector<unsigned char> image, string outputName);
 vector<unsigned char> generateImageArray(vector<unsigned char> bytes);
 vector<unsigned char> getNthSet(unsigned int n, string fileName);
 void generateVideo();
-
+void encode();
+void decode();
+void generatePNGSequence(string videoPath);
+vector<unsigned char> PNGToData(string pngImagePath);

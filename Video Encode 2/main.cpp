@@ -8,35 +8,36 @@
 #include <filesystem>
 
 using namespace std;
+using namespace cv;
 
 const string directory = "images/";
+const string outputDirectory = "output_images/";
 unsigned int width = 1920;
 unsigned int height = 1080;
-unsigned int pixelSize = 4;
+unsigned int pixelSize = 5;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
 const string outputVideo = "videos/output.mp4";
-const int framesPerImage = 2;
+const string outputDecode = "testfiles/decoded";
+const int framesPerImage = 1;
 
 int main() {
-	vector<unsigned char> image;
-	vector<unsigned char> bytes;
+	char input;
+	cout << "Do you want to encode (e) or decode(d) : ";
+	input = 'd';
+	cin >> input;
 
-	string filename = "testfiles/Capture.PNG";
-
-	//clean image directory
-	filesystem::remove_all(directory);
-	filesystem::create_directory(directory);
-	while (!endFile) {
-		string outputName = to_string(numPNG) + ".png";
-		bytes = getNthSet(numPNG, filename);
-		image = generateImageArray(bytes);
-		generatePNG(image, outputName);
-		numPNG++;
+	if (input == 'e') {
+		encode();
 	}
-	cout << numPNG << " images saved" << endl;
-	generateVideo();
+	else if (input == 'd') {
+		decode();
+	}
+	else {
+		cout << "Invalid input" << endl;
+	}
+
 	return 0;
 }
 
@@ -120,10 +121,10 @@ vector<unsigned char> generateImageArray(vector<unsigned char> bytes) {
 				}
 			}
 			else {
-				image[pixelIndex] = 255;
-				image[pixelIndex + 1] = 255;
-				image[pixelIndex + 2] = 255;
-				image[pixelIndex + 3] = 255;
+				image[pixelIndex] = 50;
+				image[pixelIndex + 1] = 50;
+				image[pixelIndex + 2] = 50;
+				image[pixelIndex + 3] = 50;
 			}
 
 			//Grid lines
@@ -203,3 +204,104 @@ void generateVideo() {
 	cout << "Video created successfully: " << outputVideo << endl;
 }
 
+void encode() {
+	vector<unsigned char> image;
+	vector<unsigned char> bytes;
+
+	string filename = "testfiles/example.txt";
+
+	//clean image directory
+	filesystem::remove_all(directory);
+	filesystem::create_directory(directory);
+	while (!endFile) {
+		string outputName = to_string(numPNG) + ".png";
+		bytes = getNthSet(numPNG, filename);
+		image = generateImageArray(bytes);
+		generatePNG(image, outputName);
+		numPNG++;
+	}
+	cout << numPNG << " images saved" << endl;
+	generateVideo();
+}
+
+void decode(){
+	vector<unsigned char> bytes;
+	filesystem::remove_all(outputDirectory);
+	generatePNGSequence("videos/output.mp4");
+	bytes = PNGToData("output_images/0.png");
+	for (auto x : bytes) {
+		cout << x ;
+	}
+}
+
+void generatePNGSequence(string videoPath) {
+
+	VideoCapture video(videoPath);
+	if (!video.isOpened())
+	{
+		cerr << "Error opening video file: " << videoPath << endl;
+		return;
+	}
+
+	int frameCount = static_cast<int>(video.get(CAP_PROP_FRAME_COUNT));
+	int frameNumber = 0;
+
+	// Create the output directory if it doesn't exist
+	filesystem::create_directory(outputDirectory);
+
+	while (frameNumber < frameCount)
+	{
+		Mat frame;
+		if (!video.read(frame))
+		{
+			cerr << "Error reading frame " << frameNumber << " from video." << endl;
+			break;
+		}
+
+		string outputName = outputDirectory + to_string(frameNumber) + ".png";
+		if (!imwrite(outputName, frame))
+		{
+			cerr << "Error saving frame " << frameNumber << " as PNG." << endl;
+		}
+
+		frameNumber++;
+	}
+
+	video.release();
+
+	cout << "PNG sequence generated successfully. Total frames: " << frameNumber << endl;
+}
+
+vector<unsigned char> PNGToData(string pngImagePath) {
+	vector<unsigned char> bytes;
+	unsigned char byte = 0;
+	Mat image = imread(pngImagePath);
+	if (image.empty())
+	{
+		cerr << "Error reading image: " << pngImagePath << endl;
+		return bytes;
+	}
+
+	Vec3b color;
+	int byteCounter = 0;
+	for (int y = pixelSize / 2; y < image.rows; y += pixelSize) {
+		for (int x = pixelSize / 2; x < image.cols; x += pixelSize) {
+			color = image.at<Vec3b>(y, x);
+			byte = byte << 2;
+
+			//Red, 01
+			if (static_cast<int>(color[2]) > 200) { byte |= 1; }
+			//Green, 11
+			else if (static_cast<int>(color[0]) > 200) { byte |= 3; }
+			//Blue, 10
+			else if (static_cast<int>(color[1]) > 200) { byte |= 2; }
+
+			if (byteCounter == 3) {
+				bytes.push_back(byte);
+				byteCounter = 0;
+			}
+			else { byteCounter++; }
+		}
+	}
+	return bytes;
+}
