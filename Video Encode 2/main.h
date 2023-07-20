@@ -14,3 +14,4 @@ void encode();
 void decode();
 void generatePNGSequence(string videoPath);
 vector<unsigned char> PNGToData(string pngImagePath);
+void appendBytesToFile(const vector<unsigned char>& bytes, const string& filename);

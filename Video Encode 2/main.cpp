@@ -14,7 +14,7 @@ const string directory = "images/";
 const string outputDirectory = "output_images/";
 unsigned int width = 1920;
 unsigned int height = 1080;
-unsigned int pixelSize = 5;
+unsigned int pixelSize = 8;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
@@ -24,7 +24,7 @@ const int framesPerImage = 1;
 
 int main() {
 	char input;
-	cout << "Do you want to encode (e) or decode(d) : ";
+	cout << "Do you want to encode (e) or decode(d) or both (b) : ";
 	input = 'd';
 	cin >> input;
 
@@ -32,6 +32,10 @@ int main() {
 		encode();
 	}
 	else if (input == 'd') {
+		decode();
+	}
+	else if (input == 'b') {
+		encode();
 		decode();
 	}
 	else {
@@ -121,10 +125,10 @@ vector<unsigned char> generateImageArray(vector<unsigned char> bytes) {
 				}
 			}
 			else {
-				image[pixelIndex] = 50;
-				image[pixelIndex + 1] = 50;
-				image[pixelIndex + 2] = 50;
-				image[pixelIndex + 3] = 50;
+				image[pixelIndex] = 255;
+				image[pixelIndex + 1] = 255;
+				image[pixelIndex + 2] = 255;
+				image[pixelIndex + 3] = 255;
 			}
 
 			//Grid lines
@@ -208,7 +212,7 @@ void encode() {
 	vector<unsigned char> image;
 	vector<unsigned char> bytes;
 
-	string filename = "testfiles/example.txt";
+	string filename = "testfiles/Capture.PNG";
 
 	//clean image directory
 	filesystem::remove_all(directory);
@@ -228,10 +232,16 @@ void decode(){
 	vector<unsigned char> bytes;
 	filesystem::remove_all(outputDirectory);
 	generatePNGSequence("videos/output.mp4");
-	bytes = PNGToData("output_images/0.png");
-	for (auto x : bytes) {
-		cout << x ;
+	string picName;
+	for (int i = 0; i < numPNG; i++) {
+		picName = "output_images/" + to_string(i) + ".png";
+		bytes = PNGToData(picName);
+		appendBytesToFile(bytes, "testfiles/outfile");
 	}
+	//bytes = PNGToData("output_images/0.png");
+	/*for (auto x : bytes) {
+		cout << x ;
+	}*/
 }
 
 void generatePNGSequence(string videoPath) {
@@ -270,6 +280,7 @@ void generatePNGSequence(string videoPath) {
 	video.release();
 
 	cout << "PNG sequence generated successfully. Total frames: " << frameNumber << endl;
+	numPNG = frameNumber;
 }
 
 vector<unsigned char> PNGToData(string pngImagePath) {
@@ -289,8 +300,11 @@ vector<unsigned char> PNGToData(string pngImagePath) {
 			color = image.at<Vec3b>(y, x);
 			byte = byte << 2;
 
+			if (static_cast<int>(color[0]) > 200 && static_cast<int>(color[1]) > 200 && static_cast<int>(color[2]) > 200) {
+				return bytes;
+			}
 			//Red, 01
-			if (static_cast<int>(color[2]) > 200) { byte |= 1; }
+			else if (static_cast<int>(color[2]) > 200) { byte |= 1; }
 			//Green, 11
 			else if (static_cast<int>(color[0]) > 200) { byte |= 3; }
 			//Blue, 10
@@ -305,4 +319,24 @@ vector<unsigned char> PNGToData(string pngImagePath) {
 		}
 	}
 	return bytes;
+}
+
+void appendBytesToFile(const vector<unsigned char>& bytes, const string& filename)
+{
+	// Open the file in binary append mode to add bytes at the end
+	ofstream file(filename, ios::binary | ios::app);
+	if (!file)
+	{
+		cerr << "Error opening file: " << filename << endl;
+		return;
+	}
+
+	// Write the bytes to the file
+	file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+	if (!file)
+	{
+		cerr << "Error writing bytes to file: " << filename << endl;
+	}
+
+	file.close();
 }
