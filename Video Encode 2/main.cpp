@@ -24,6 +24,9 @@ const string outputDecode = "testfiles/decoded";
 const int framesPerImage = 1;
 const string outfileExt = ".mp4";
 
+/**
+* Main function of execution, propmts user for decoding/encoding
+*/
 int main() {
 	char input;
 	cout << "Do you want to encode (e) or decode(d) or both (b) : ";
@@ -47,6 +50,13 @@ int main() {
 	return 0;
 }
 
+/**
+* Generates a PNG from an image vector as outputName
+* 
+* @param image a vector of form {r,g,b,a,r,g,...}
+* @param outputName the output name of the PNG
+* @return 1 if successful
+*/
 int generatePNG(vector<unsigned char> image, string outputName)
 {
 	const string outputPath = directory + outputName;
@@ -63,6 +73,12 @@ int generatePNG(vector<unsigned char> image, string outputName)
 	//if (error) cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
 }
 
+/**
+* Generates an immage array from an array of bytes (colors depend on bytes)
+*
+* @param bytes a vector of bytes
+* @return a vector of form {r,g,b,a,r,g,...}
+*/
 vector<unsigned char> generateImageArray(vector<unsigned char> bytes) {
 	vector<unsigned char> image(width * height * 4);
 	int gridPos = 0;
@@ -145,6 +161,13 @@ vector<unsigned char> generateImageArray(vector<unsigned char> bytes) {
 	return image;
 }
 
+/**
+* Returns the nth set of bytes of size numBytes (number of bytes that will fit within the specified resolution)
+*
+* @param n the set of bytes to return (0 will return 1st png worth and so on)
+* @param fileName the file from which to read the bytes from
+* @return a vector of bytes from the specified reigion of the file
+*/
 vector<unsigned char> getNthSet(unsigned int n, string fileName) {
 	unsigned int bytesToUse = numBytes;
 	vector<unsigned char> result;
@@ -186,6 +209,10 @@ vector<unsigned char> getNthSet(unsigned int n, string fileName) {
 	return result;
 }
 
+/**
+* Reads from the directory of generated PNGs from functions above and stitches
+* them together in a video of speficied format, frame rate, etc.
+*/
 void generateVideo() {
 	cv::VideoWriter video(outputVideo, cv::VideoWriter::fourcc('m', 'p', '4', 'v'), 30, cv::Size(width, height));
 
@@ -210,6 +237,9 @@ void generateVideo() {
 	cout << "Video created successfully: " << outputVideo << endl;
 }
 
+/**
+* The function to call for encoding a file
+*/
 void encode() {
 	vector<unsigned char> image;
 	vector<unsigned char> bytes;
@@ -229,6 +259,9 @@ void encode() {
 	generateVideo();
 }
 
+/**
+* The function to call for decoding a file
+*/
 void decode(){
 	vector<unsigned char> bytes;
 	filesystem::remove_all(outputDirectory);
@@ -246,6 +279,11 @@ void decode(){
 	}*/
 }
 
+/**
+* Generates a sequence of PNGs from a specified video path
+*
+* @param videoPath the path of the video
+*/
 void generatePNGSequence(string videoPath) {
 
 	VideoCapture video(videoPath);
@@ -285,6 +323,12 @@ void generatePNGSequence(string videoPath) {
 	numPNG = frameNumber;
 }
 
+/**
+* Converts a PNG from the generatePNGSequence back into a vector of bytes
+*
+* @param pngImagePath the path to the png image
+* @return a vector of bytes correpsonding to the png image
+*/
 vector<unsigned char> PNGToData(string pngImagePath) {
 	vector<unsigned char> bytes;
 	unsigned char byte = 0;
@@ -323,6 +367,12 @@ vector<unsigned char> PNGToData(string pngImagePath) {
 	return bytes;
 }
 
+/**
+* Appends bytes to the end of a specified file
+*
+* @param bytes the bytes to append to a file
+* @param filename the file name of which to append the bytes to
+*/
 void appendBytesToFile(const vector<unsigned char>& bytes, const string& filename)
 {
 	// Open the file in binary append mode to add bytes at the end
