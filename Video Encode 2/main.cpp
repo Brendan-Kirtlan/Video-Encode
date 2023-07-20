@@ -23,6 +23,7 @@ const string outputVideo = "videos/output.mp4";
 const string outputDecode = "testfiles/decoded";
 const int framesPerImage = 1;
 const string outfileExt = ".mp4";
+const int tolerance = 150;
 
 /**
 * Main function of execution, propmts user for decoding/encoding
@@ -345,16 +346,16 @@ vector<unsigned char> PNGToData(string pngImagePath) {
 		for (int x = pixelSize / 2; x < image.cols; x += pixelSize) {
 			color = image.at<Vec3b>(y, x);
 			byte = byte << 2;
-
-			if (static_cast<int>(color[0]) > 200 && static_cast<int>(color[1]) > 200 && static_cast<int>(color[2]) > 200) {
+			//White marks the end of the file
+			if (static_cast<int>(color[0]) > tolerance && static_cast<int>(color[1]) > tolerance && static_cast<int>(color[2]) > tolerance) {
 				return bytes;
 			}
 			//Red, 01
-			else if (static_cast<int>(color[2]) > 200) { byte |= 1; }
+			else if (static_cast<int>(color[2]) > tolerance) { byte |= 1; }
 			//Green, 11
-			else if (static_cast<int>(color[0]) > 200) { byte |= 3; }
+			else if (static_cast<int>(color[0]) > tolerance) { byte |= 3; }
 			//Blue, 10
-			else if (static_cast<int>(color[1]) > 200) { byte |= 2; }
+			else if (static_cast<int>(color[1]) > tolerance) { byte |= 2; }
 			//Black, 00, automatically occurs in byte from the double bit shift
 
 			if (byteCounter == 3) {
