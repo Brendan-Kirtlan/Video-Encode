@@ -12,15 +12,17 @@ using namespace cv;
 
 const string directory = "images/";
 const string outputDirectory = "output_images/";
-unsigned int width = 1920;
-unsigned int height = 1080;
+unsigned int width = 1280;
+unsigned int height = 720;
 unsigned int pixelSize = 8;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
+const string fileToEncode = "dreamy.mp4";
 const string outputVideo = "videos/output.mp4";
 const string outputDecode = "testfiles/decoded";
 const int framesPerImage = 1;
+const string outfileExt = ".mp4";
 
 int main() {
 	char input;
@@ -212,8 +214,7 @@ void encode() {
 	vector<unsigned char> image;
 	vector<unsigned char> bytes;
 
-	string filename = "testfiles/Capture.PNG";
-
+	string filename = "testfiles/" + fileToEncode;
 	//clean image directory
 	filesystem::remove_all(directory);
 	filesystem::create_directory(directory);
@@ -232,11 +233,12 @@ void decode(){
 	vector<unsigned char> bytes;
 	filesystem::remove_all(outputDirectory);
 	generatePNGSequence("videos/output.mp4");
+	filesystem::remove("testfiles/outfile" + outfileExt);
 	string picName;
 	for (int i = 0; i < numPNG; i++) {
 		picName = "output_images/" + to_string(i) + ".png";
 		bytes = PNGToData(picName);
-		appendBytesToFile(bytes, "testfiles/outfile");
+		appendBytesToFile(bytes, "testfiles/outfile" + outfileExt);
 	}
 	//bytes = PNGToData("output_images/0.png");
 	/*for (auto x : bytes) {
