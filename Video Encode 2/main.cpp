@@ -12,9 +12,9 @@ using namespace cv;
 
 const string directory = "images/";
 const string outputDirectory = "output_images/";
-unsigned int width = 1280;
-unsigned int height = 720;
-unsigned int pixelSize = 8;
+unsigned int width = 1920;
+unsigned int height = 1080;
+unsigned int pixelSize = 4;
 unsigned const int numBytes = ((width / pixelSize) * (height / pixelSize)) / 4;
 bool endFile = false;
 unsigned int numPNG = 0;
@@ -249,6 +249,7 @@ void encode() {
 	//clean image directory
 	filesystem::remove_all(directory);
 	filesystem::create_directory(directory);
+
 	while (!endFile) {
 		string outputName = to_string(numPNG) + ".png";
 		bytes = getNthSet(numPNG, filename);
