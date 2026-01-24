@@ -24,4 +24,4 @@ To build this project on Linux, simply follow the instructions below. Windows wi
 2. Run it. It will automatically install to ~/Desktop/vid-encode and you can run the program by going to ~/Desktop/vid-encode/Video Encode 2 and running ./video_encode.
 
 ## Requirements
-You will need FFMPEG to actually use the program. All other requirements are included.
+You will need FFMPEG and Opencv2 to actually use the program. All requirements for building are included.
