@@ -3,3 +3,16 @@ Since some video hosting services let you store unlimited videos, you can store 
 This project uses lodepng, ffmpeg, and opencv2 to encode files into video format
 
 Video explanation: https://youtu.be/_w6PCHutmb4?si=J81z_G9hhyyJ-BBY
+
+To build this project on Linux, simply follow the instructions below. Windows will only work if you use something like WSL2 or MINGW64.
+
+1. cd to the project folder (for this i'll just use /usr/vid-encode)
+
+`cd '/usr/vid-encode/Video Encode 2'`
+
+2. use g++ to build main.cpp
+
+`g++ main.cpp lodepng.cpp -o video_encode $(pkg-config --cflags --libs opencv4) -lavcodec -lavformat -lavutil -lswscale`
+
+
+3. use `./video_encode encode /path/to/your/file` to encode files and `./video_encode decode /path/to/encoded/video` to decode.
